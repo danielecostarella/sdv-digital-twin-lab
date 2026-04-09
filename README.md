@@ -181,8 +181,8 @@ The gateway starts publishing signals within ~2 seconds of the broker becoming h
 ```bash
 pip install kuksa-client
 
-# Interactive shell
-kuksa-client --host localhost --port 55555 --insecure
+# Interactive shell (host port 55556 → container internal 55555)
+kuksa-client --host localhost --port 55556 --insecure
 
 # Inside the shell:
 getValue Vehicle.Speed
@@ -202,7 +202,7 @@ docker compose down
 ### Unit Tests
 
 ```bash
-pip install pytest pytest-asyncio httpx
+pip install pytest pytest-asyncio pytest-timeout httpx
 pip install -r services/gateway-emulator/requirements.txt
 pip install -r services/infotainment-dashboard/requirements.txt
 
@@ -216,8 +216,8 @@ bash scripts/download-vss.sh
 docker compose up -d --build
 sleep 8  # wait for gateway to publish first signals
 
-pip install pytest pytest-asyncio httpx kuksa-client
-pytest tests/integration/ -v --timeout=30
+pip install pytest pytest-asyncio pytest-timeout httpx kuksa-client
+pytest tests/integration/ -v
 
 docker compose down
 ```
@@ -258,12 +258,15 @@ within valid physical ranges.
 
 ---
 
-## Architecture Decision Records
+## Documentation
 
-Design choices are documented as ADRs so that the reasoning is preserved alongside the code:
-
-- [ADR 001 — KUKSA over raw MQTT](docs/adr/001-kuksa-over-mqtt.md)
-- [ADR 002 — FastAPI WebSocket bridge](docs/adr/002-fastapi-ws-bridge.md)
+| Document | Description |
+|---|---|
+| [Architecture](docs/architecture.md) | Full system design, data flows, deployment topology, extension points |
+| [Functional Specification](docs/fsd.md) | Functional and non-functional requirements, use cases, interface definitions |
+| [Compliance Posture](docs/compliance-posture.md) | ISO 21434 / UN R155 mapping |
+| [ADR 001 — KUKSA over raw MQTT](docs/adr/001-kuksa-over-mqtt.md) | Why KUKSA instead of a generic MQTT broker |
+| [ADR 002 — FastAPI WebSocket bridge](docs/adr/002-fastapi-ws-bridge.md) | Why a Python bridge instead of direct gRPC-Web |
 
 ---
 

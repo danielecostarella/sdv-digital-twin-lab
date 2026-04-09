@@ -33,7 +33,7 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: |
-          pip install pytest pytest-asyncio httpx
+          pip install pytest pytest-asyncio pytest-timeout httpx
           pip install -r services/${{ matrix.service }}/requirements.txt
       - name: Run unit tests
         run: |

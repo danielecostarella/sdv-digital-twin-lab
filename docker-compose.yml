@@ -1,0 +1,54 @@
+networks:
+  sdv-net:
+    driver: bridge
+
+services:
+
+  databroker:
+    image: ghcr.io/eclipse-kuksa/kuksa-databroker:0.6.1
+    container_name: sdv-databroker
+    command:
+      - "--insecure"
+      - "--address"
+      - "0.0.0.0"
+      - "--vss"
+      - "/vss/vss_release_4.0.json"
+    ports:
+      - "55556:55555"   # 55555 is blocked by Docker Desktop on macOS; internal port unchanged
+    volumes:
+      - ./services/databroker/vss:/vss:ro
+    networks:
+      - sdv-net
+    # KUKSA Databroker is a distroless Rust image (no shell/tools available).
+    # Dependent services use restart: on-failure to retry until the broker is up.
+
+  gateway-emulator:
+    build:
+      context: ./services/gateway-emulator
+      dockerfile: Dockerfile
+    container_name: sdv-gateway-emulator
+    environment:
+      KUKSA_DATABROKER_HOST: databroker
+      KUKSA_DATABROKER_PORT: "55555"
+      PUBLISH_INTERVAL_SEC: "1.0"
+    networks:
+      - sdv-net
+    depends_on:
+      - databroker
+    restart: on-failure
+
+  infotainment-dashboard:
+    build:
+      context: ./services/infotainment-dashboard
+      dockerfile: Dockerfile
+    container_name: sdv-dashboard
+    ports:
+      - "8080:8080"
+    environment:
+      KUKSA_DATABROKER_HOST: databroker
+      KUKSA_DATABROKER_PORT: "55555"
+    networks:
+      - sdv-net
+    depends_on:
+      - databroker
+    restart: on-failure

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDV Digital Twin Lab — Infotainment</title>
+    <link rel="stylesheet" href="/dashboard.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <span class="logo">SDV Digital Twin Lab</span>
+        <span id="connection-badge" class="badge badge--disconnected">Disconnected</span>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- Speed gauge -->
+      <section class="card card--wide">
+        <h2>Speed</h2>
+        <div class="gauge-wrap">
+          <canvas id="speedGauge"></canvas>
+          <div class="gauge-value">
+            <span id="speedValue">--</span>
+            <small>km/h</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Battery SoC -->
+      <section class="card">
+        <h2>Battery SoC</h2>
+        <div class="soc-wrap">
+          <div class="soc-bar-bg">
+            <div id="socBar" class="soc-bar" style="width: 0%"></div>
+          </div>
+          <span id="socValue" class="soc-value">-- %</span>
+        </div>
+      </section>
+
+      <!-- Motor RPM -->
+      <section class="card">
+        <h2>Motor RPM</h2>
+        <p class="big-number" id="rpmValue">--</p>
+      </section>
+
+      <!-- High Beam -->
+      <section class="card">
+        <h2>High Beam</h2>
+        <div class="led-wrap">
+          <svg width="48" height="48" viewBox="0 0 48 48">
+            <circle id="highBeamLed" cx="24" cy="24" r="20" fill="#333" stroke="#555" stroke-width="2" />
+          </svg>
+          <span id="highBeamLabel">OFF</span>
+        </div>
+      </section>
+
+      <!-- GPS -->
+      <section class="card">
+        <h2>GPS Location</h2>
+        <dl class="gps-table">
+          <dt>Latitude</dt>  <dd id="latValue">--</dd>
+          <dt>Longitude</dt> <dd id="lonValue">--</dd>
+        </dl>
+      </section>
+
+      <!-- Speed history sparkline -->
+      <section class="card card--wide">
+        <h2>Speed History (last 60 s)</h2>
+        <canvas id="speedHistory"></canvas>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

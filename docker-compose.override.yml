@@ -1,0 +1,23 @@
+# Dev overrides — automatically picked up by `docker compose up` locally.
+# Not used in CI (which calls `docker compose -f docker-compose.yml ...`).
+services:
+  gateway-emulator:
+    volumes:
+      - ./services/gateway-emulator/src:/app/src:ro
+    environment:
+      PUBLISH_INTERVAL_SEC: "0.5"
+
+  infotainment-dashboard:
+    volumes:
+      - ./services/infotainment-dashboard/src:/app/src:ro
+      - ./services/infotainment-dashboard/static:/app/static:ro
+    command:
+      [
+        "uvicorn",
+        "src.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080",
+        "--reload",
+      ]

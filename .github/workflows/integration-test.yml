@@ -1,0 +1,64 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  integration:
+    name: End-to-End Signal Flow
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download VSS 4.0
+        run: bash scripts/download-vss.sh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install pytest pytest-asyncio httpx kuksa-client
+
+      - name: Start stack (CI mode — no override file)
+        run: docker compose -f docker-compose.yml up -d --build
+
+      - name: Wait for KUKSA Databroker (gRPC port 55555)
+        run: |
+          echo "Waiting for databroker..."
+          for i in $(seq 1 30); do
+            if python - <<'EOF'
+import socket, sys
+s = socket.socket()
+s.settimeout(1)
+try:
+    s.connect(("localhost", 55555))
+    print("Broker reachable")
+    sys.exit(0)
+except Exception:
+    sys.exit(1)
+finally:
+    s.close()
+EOF
+            then break; fi
+            echo "  attempt $i / 30 — retrying in 2 s"
+            sleep 2
+          done
+
+      - name: Wait for gateway to publish first signals
+        run: sleep 6
+
+      - name: Run integration tests
+        run: pytest tests/integration/ -v --timeout=30
+
+      - name: Dump container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yml logs
+
+      - name: Tear down
+        if: always()
+        run: docker compose -f docker-compose.yml down -v

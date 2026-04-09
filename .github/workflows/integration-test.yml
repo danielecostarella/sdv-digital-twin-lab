@@ -27,24 +27,14 @@ jobs:
       - name: Start stack (CI mode — no override file)
         run: docker compose -f docker-compose.yml up -d --build
 
-      - name: Wait for KUKSA Databroker (gRPC port 55555)
+      - name: Wait for KUKSA Databroker (gRPC port 55556)
         run: |
           echo "Waiting for databroker..."
           for i in $(seq 1 30); do
-            if python - <<'EOF'
-import socket, sys
-s = socket.socket()
-s.settimeout(1)
-try:
-    s.connect(("localhost", 55555))
-    print("Broker reachable")
-    sys.exit(0)
-except Exception:
-    sys.exit(1)
-finally:
-    s.close()
-EOF
-            then break; fi
+            if nc -z localhost 55556 2>/dev/null; then
+              echo "Broker reachable on port 55556"
+              break
+            fi
             echo "  attempt $i / 30 — retrying in 2 s"
             sleep 2
           done

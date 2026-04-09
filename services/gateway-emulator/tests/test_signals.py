@@ -1,6 +1,5 @@
 """Unit tests for the signal simulation logic."""
 
-import pytest
 
 from src.signals import VehicleState, compute_state
 

@@ -1,7 +1,7 @@
 """Integration tests for the Infotainment Dashboard HTTP/WS endpoints."""
 
-import pytest
 import httpx
+import pytest
 
 DASHBOARD_URL = "http://localhost:8080"
 

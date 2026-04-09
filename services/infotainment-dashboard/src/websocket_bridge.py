@@ -2,7 +2,6 @@
 
 import json
 import logging
-from typing import Set
 
 from fastapi import WebSocket
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class ConnectionManager:
     def __init__(self) -> None:
-        self._active: Set[WebSocket] = set()
+        self._active: set[WebSocket] = set()
 
     async def connect(self, ws: WebSocket) -> None:
         await ws.accept()
@@ -26,7 +25,7 @@ class ConnectionManager:
         if not self._active:
             return
         message = json.dumps(data)
-        dead: Set[WebSocket] = set()
+        dead: set[WebSocket] = set()
         for ws in self._active:
             try:
                 await ws.send_text(message)

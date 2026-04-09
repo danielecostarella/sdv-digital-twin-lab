@@ -11,3 +11,4 @@ build/
 
 # VSS JSON is downloaded at build time, not committed
 services/databroker/vss/*.json
+!services/databroker/vss/.gitkeep

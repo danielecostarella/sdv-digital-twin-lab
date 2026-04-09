@@ -7,8 +7,10 @@ set -euo pipefail
 VSS_VERSION="4.0"
 DEST="services/databroker/vss/vss_release_4.0.json"
 
+mkdir -p "$(dirname "${DEST}")"
+
 echo "Downloading COVESA VSS ${VSS_VERSION}..."
-curl -fsSL \
+curl -fL --retry 3 --retry-delay 2 \
   "https://github.com/COVESA/vehicle_signal_specification/releases/download/v${VSS_VERSION}/vss_rel_${VSS_VERSION}.json" \
   -o "${DEST}"
 
